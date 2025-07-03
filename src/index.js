@@ -238,12 +238,13 @@ export function compile(code) {
             const char = parseNumber(charRaw);
             if(Number.isNaN(char) && charReg === -1) throw new Error("Invalid character!");
             removeSpace();
-            const addr = parseNumber(getToken());
-            if(Number.isNaN(addr)) throw new Error("Invalid address!");
+            const addrRaw = getToken();
+            const addr = parseNumber(addrRaw);
+            const addrPart = Number.isNaN(addr) ? { type: "addr", name: addrRaw } : { type: "bytes", bytes: Buffer.from([(addr >> 8) & 0xff, addr & 0xff]) };
             if(charReg === -1)
-                json.push({ type: "bytes", bytes: Buffer.from([0x1f, char, (addr >> 8) & 0xff, addr & 0xff]) });
+                json.push({ type: "bytes", bytes: Buffer.from([0x1f, char]) }, addrPart);
             else
-                json.push({ type: "bytes", bytes: Buffer.from([0x25, charReg, (addr >> 8) & 0xff, addr & 0xff]) });
+                json.push({ type: "bytes", bytes: Buffer.from([0x25, charReg]) }, addrPart);
         } else if(tok === "clear")
             json.push({ type: "bytes", bytes: Buffer.from([0x21]) });
         else if(tok === "printxy") {
