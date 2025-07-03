@@ -77,24 +77,24 @@ export function compile(code) {
             removeSpace();
             const reg = parseRegister(to);
             if(reg === -1) {
-                if(to === "*") {
+                if(to === "*" || to === "^") {
                     const addr = parseNumber(getToken());
                     removeSpace();
                     const reg = parseRegister(getToken());
                     if(Number.isNaN(addr)) throw new Error("Invalid dereference!");
                     if(reg === -1) throw new Error("Invalid value!");
-                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | 0]) });
+                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | (to === "*" ? 0 : 2)]) });
                 } else throw new Error("Invalid target");
             } else {
                 const from = getToken();
                 const fromReg = parseRegister(from);
                 const fromNumber = parseNumber(from);
                 if(fromReg !== -1) json.push({ type: "bytes", bytes: Buffer.from([0x03, (fromReg << 4) | reg]) });
-                else if(from === "*") {
+                else if(from === "*" || from === "^") {
                     removeSpace();
                     const addr = parseNumber(getToken());
                     if(Number.isNaN(addr)) throw new Error("Invalid dereference");
-                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | 1]) });
+                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | (from === "*" ? 1 : 3)]) });
                 } else if(!Number.isNaN(fromNumber)) json.push({ type: "bytes", bytes: Buffer.from([0x06, 0x00 | reg, fromNumber]) });
             }
         }

@@ -9,8 +9,8 @@ Everything is big-endian!
 |`03`|`XY`|✔|
 |`04`|`XXXXY0`|✔|
 |`04`|`XXXXY1`|✔|
-|`04`|`XXXXY2`||
-|`04`|`XXXXY3`||
+|`04`|`XXXXY2`|✔|
+|`04`|`XXXXY3`|✔|
 |`05`|`XXXX`||
 |`06`|`0XNN`|✔|
 |`06`|`1XNN`||

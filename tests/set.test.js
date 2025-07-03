@@ -13,3 +13,9 @@ test("set: reg = number", () => {
 test("set: *addr = reg", () => {
     expect(compile("set *0x1234 $9")).toEqual(Buffer.from("04123490", "hex"));
 });
+test("set: reg = ^disk", () => {
+    expect(compile("set $7 ^0x1234")).toEqual(Buffer.from("04123473", "hex"));
+});
+test("set: ^disk = reg", () => {
+    expect(compile("set ^0x1234 $8")).toEqual(Buffer.from("04123482", "hex"));
+});
