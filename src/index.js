@@ -23,7 +23,13 @@ export function compile(code) {
     while(code !== "") {
         const tok = getToken();
         if(!tok) throw new Error("Couldn't match token!"); // TODO: at which line?
-        if(tok === "printsys") {
+        if(tok === "[") {
+            removeSpace();
+            const name = getToken();
+            removeSpace();
+            getToken(); // Closing bracket
+            json.push({ type: "section", name });
+        } else if(tok === "printsys") {
             removeSpace();
             const char = getToken();
             const reg = parseRegister(char);
@@ -33,9 +39,44 @@ export function compile(code) {
                 if(Number.isNaN(num)) throw new Error("Invalid token!");
                 json.push({ type: "bytes", bytes: Buffer.from(`1c${num.toString(16).slice(0, 2).padStart(2, "0")}`, "hex") });
             }
+        } else if(tok === "db") {
+            removeSpace();
+            const val = getToken();
+            let bytes;
+            if(str[0] === "\"") bytes = Buffer.from(JSON.parse(val), "ascii");
+            else if(str[0] === "h" && str[1] === "\"") bytes = Buffer.from(val.slice(2, -1), "hex");
+            json.push({ type: "bytes", bytes });
+        } else if(tok === "goto") {
+            removeSpace();
+            const addr = getToken();
+            const numAddr = parseNumber(addr);
+            if(!Number.isNaN(numAddr)) json.push({ type: "bytes", bytes: Buffer.from([0x00, (numAddr >> 8) & 0xff, numAddr & 0xff]) });
+            else json.push({ type: "bytes", bytes: Buffer.from("00", "hex") }, { type: "addr", name: addr });
         }
         removeSpace();
     }
 
-    return Buffer.concat(json.filter(x => x.type === "bytes").map(x => x.bytes));
+    const getSectionAddr = name => {
+        let n = 0;
+        for(const part of json)
+            if(part.type === "section" && part.name === name) return n;
+            else if(part.type === "bytes") n += part.bytes.length;
+            else if(part.type === "addr") n += 2;
+        return -1;
+    };
+
+    return Buffer.concat(json
+        .map(x => {
+            if(x.type === "addr") {
+                const addr = getSectionAddr(x.name);
+                if(addr === -1) throw new Error("Can't find section: " + x.name);
+                return {
+                    type: "bytes",
+                    bytes: Buffer.from([(addr >> 8) & 0xff, addr & 0xff])
+                };
+            }
+            return x;
+        })
+        .filter(x => x.type === "bytes")
+        .map(x => x.bytes));
 }
