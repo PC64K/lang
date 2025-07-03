@@ -31,10 +31,10 @@ Everything is big-endian!
 |`0d`|`XY`|✔|
 |`0e`|`XY`|✔|
 |`0f`|`XY`|✔|
-|`10`|||
-|`11`|`XXXX`||
-|`12`|`XXXX`||
-|`13`|`XXXX`||
+|`10`||✔|
+|`11`|`XXXX`|✔|
+|`12`|`XXXX`|✔|
+|`13`|`XXXX`|✔|
 |`14`|`XYZZZZ`||
 |`15`|`XYZZZZ`||
 |`16`|`XYZZZZ`||
