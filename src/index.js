@@ -194,6 +194,35 @@ export function compile(code) {
             const reg2 = parseRegister(getToken());
             if(reg1 === -1 || reg2 === -1) throw new Error("Invalid registers for colors!");
             json.push({ type: "bytes", bytes: Buffer.from([0x20, (reg1 << 4) | reg2]) });
+        } else if(tok === "timfreq") { // TODO: a lot of repeating code...
+            removeSpace();
+            const timer = getToken();
+            if(!["delay", "sound"].includes(timer)) throw new Error("Invalid timer!");
+            removeSpace();
+            const reg = parseRegister(getToken());
+            if(reg === -1) throw new Error("Invalid register for timer control!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x1b, (timer === "delay" ? 0x00 : 0x10) | reg]) });
+        } else if(tok === "timset") {
+            removeSpace();
+            const timer = getToken();
+            if(!["delay", "sound"].includes(timer)) throw new Error("Invalid timer!");
+            removeSpace();
+            const reg = parseRegister(getToken());
+            if(reg === -1) throw new Error("Invalid register for timer control!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x1b, (timer === "delay" ? 0x20 : 0x30) | reg]) });
+        } else if(tok === "timget") {
+            removeSpace();
+            const timer = getToken();
+            if(!["delay", "sound"].includes(timer)) throw new Error("Invalid timer!");
+            removeSpace();
+            const reg = parseRegister(getToken());
+            if(reg === -1) throw new Error("Invalid register for timer control!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x1b, (timer === "delay" ? 0x50 : 0x60) | reg]) });
+        } else if(tok === "timjoin") {
+            removeSpace();
+            const timer = getToken();
+            if(!["delay", "sound"].includes(timer)) throw new Error("Invalid timer!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x1b, timer === "delay" ? 0x40 : 0x41]) });
         }
         removeSpace();
     }
