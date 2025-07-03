@@ -47,8 +47,9 @@ export function compile(code) {
             removeSpace();
             const val = getToken();
             let bytes;
-            if(str[0] === "\"") bytes = Buffer.from(JSON.parse(val), "ascii");
-            else if(str[0] === "h" && str[1] === "\"") bytes = Buffer.from(val.slice(2, -1), "hex");
+            if(val[0] === "\"") bytes = Buffer.from(JSON.parse(val), "ascii");
+            else if(val[0] === "h" && val[1] === "\"") bytes = Buffer.from(val.slice(2, -1), "hex");
+            else throw new Error("Invalid string! Must be h\"\" or \"\"")
             json.push({ type: "bytes", bytes });
         } else if(tok === "goto") {
             removeSpace();
