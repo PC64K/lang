@@ -253,6 +253,24 @@ export function compile(code) {
             const reg2 = parseRegister(getToken());
             if(reg1 === -1 || reg2 === -1) throw new Error("Invalid registers!");
             json.push({ type: "bytes", bytes: Buffer.from([0x22, (reg1 << 4) | reg2]) });
+        } else if(tok === "copy") {
+            removeSpace();
+            const allowedTypes = ["*", "^"];
+            const type1 = getToken();
+            if(!allowedTypes.includes(type1)) throw new Error("Invalid type!");
+            removeSpace();
+            const addr1 = parseNumber(getToken());
+            removeSpace();
+            const type2 = getToken();
+            if(!allowedTypes.includes(type2)) throw new Error("Invalid type!");
+            if(type1 === type2) throw new Error("Same types aren't supported for copy (for now)!");
+            const addr2 = parseNumber(getToken());
+            if(Number.isNaN(addr1) || Number.isNaN(addr2)) throw new Error("Invalid addresses!");
+            removeSpace();
+
+            const reg = parseRegister(getToken());
+            if(reg === -1) throw new Error("Invalid register!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x23, (addr1 >> 8) & 0xff, addr1 & 0xff, (addr2 >> 8) & 0xff, addr2 & 0xff, (reg << 4) | (type1 === "^" ? 0 : 1)]) });
         }
         removeSpace();
     }
