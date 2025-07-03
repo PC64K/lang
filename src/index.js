@@ -133,6 +133,24 @@ export function compile(code) {
             operation(0x8, 0x0e)
         else if(tok === "lshift")
             operation(0x9, 0x0f)
+        else if(tok === "ret")
+            json.push({ type: "bytes", bytes: Buffer.from([0x10]) });
+        else if(tok === "call") {
+            removeSpace();
+            const addr = parseNumber(getToken());
+            if(!Number.isNaN(addr)) json.push({ type: "bytes", bytes: Buffer.from([0x11, (addr >> 8) & 0xff, addr & 0xff]) });
+            else json.push({ type: "bytes", bytes: Buffer.from([0x11]) }, { type: "addr", name: addr });
+        } else if(tok === "pop") { // TODO: parseAddr
+            removeSpace();
+            const addr = parseNumber(getToken());
+            if(!Number.isNaN(addr)) json.push({ type: "bytes", bytes: Buffer.from([0x12, (addr >> 8) & 0xff, addr & 0xff]) });
+            else json.push({ type: "bytes", bytes: Buffer.from([0x12]) }, { type: "addr", name: addr });
+        } else if(tok === "push") {
+            removeSpace();
+            const addr = parseNumber(getToken());
+            if(!Number.isNaN(addr)) json.push({ type: "bytes", bytes: Buffer.from([0x13, (addr >> 8) & 0xff, addr & 0xff]) });
+            else json.push({ type: "bytes", bytes: Buffer.from([0x13]) }, { type: "addr", name: addr });
+        }
         removeSpace();
     }
 
