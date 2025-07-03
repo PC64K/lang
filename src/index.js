@@ -50,8 +50,22 @@ export function compile(code) {
             removeSpace();
             const addr = getToken();
             const numAddr = parseNumber(addr);
-            if(!Number.isNaN(numAddr)) json.push({ type: "bytes", bytes: Buffer.from([0x00, (numAddr >> 8) & 0xff, numAddr & 0xff]) });
-            else json.push({ type: "bytes", bytes: Buffer.from("00", "hex") }, { type: "addr", name: addr });
+            if(addr === "*") {
+                removeSpace();
+                const trueAddr = getToken();
+                const numAddr = parseNumber(trueAddr);
+                if(Number.isNaN(numAddr)) throw new Error("Invalid dereference");
+                json.push({ type: "bytes", bytes: Buffer.from([0x01, (numAddr >> 8) & 0xff, numAddr & 0xff]) });
+            } else if(!Number.isNaN(numAddr)) json.push({ type: "bytes", bytes: Buffer.from([0x00, (numAddr >> 8) & 0xff, numAddr & 0xff]) });
+            else {
+                const reg = parseRegister(addr);
+                if(reg !== -1) {
+                    removeSpace();
+                    const reg2 = parseRegister(getToken());
+                    if(reg === -1) throw new Error("Invalid register");
+                    json.push({ type: "bytes", bytes: Buffer.from([0x02, (reg << 4) | reg2]) });
+                } else json.push({ type: "bytes", bytes: Buffer.from("00", "hex") }, { type: "addr", name: addr });
+            }
         }
         removeSpace();
     }
