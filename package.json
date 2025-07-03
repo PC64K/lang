@@ -1,0 +1,32 @@
+{
+  "name": "lang64k",
+  "version": "0.1.0",
+  "description": "lang64K is an assembly-like programming language for PC64K",
+  "keywords": [
+    "pc64k",
+    "lang64k"
+  ],
+  "bin": {
+    "pc64c": "bin/compiler.js"
+  },
+  "homepage": "https://github.com/PC64K/lang#readme",
+  "bugs": {
+    "url": "https://github.com/PC64K/lang/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PC64K/lang.git"
+  },
+  "license": "MIT",
+  "author": "Milk_Cool",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.0.4",
+    "@types/node": "^24.0.10",
+    "jest": "^30.0.4"
+  }
+}
