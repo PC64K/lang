@@ -180,6 +180,14 @@ export function compile(code) {
             comparison(0x4, 0x18);
         else if(tok === "lesseqgo")
             comparison(0x5, 0x19);
+        else if(tok === "color") {
+            removeSpace();
+            const reg1 = parseRegister(getToken());
+            removeSpace();
+            const reg2 = parseRegister(getToken());
+            if(reg1 === -1 || reg2 === -1) throw new Error("Invalid registers for colors!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x20, (reg1 << 4) | reg2]) });
+        }
         removeSpace();
     }
 

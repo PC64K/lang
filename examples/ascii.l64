@@ -1,0 +1,20 @@
+[start]
+set $0 ' '
+[loop]
+eqgo $0 0x7f color
+print sys $0
+add $0 1
+set $1 $0
+and $1 0b00001111
+eqgo $1 0 newline
+goto loop
+[newline]
+print sys '\r'
+print sys '\n'
+goto loop
+[color]
+set $2 0b11100000
+set $3 0b00011100
+color $2 $3
+[end]
+goto end
