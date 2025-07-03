@@ -66,6 +66,22 @@ export function compile(code) {
                     json.push({ type: "bytes", bytes: Buffer.from([0x02, (reg << 4) | reg2]) });
                 } else json.push({ type: "bytes", bytes: Buffer.from("00", "hex") }, { type: "addr", name: addr });
             }
+        } else if(tok === "set") {
+            removeSpace();
+            const to = getToken();
+            removeSpace();
+            const reg = parseRegister(to);
+            if(reg === -1) throw new Error("Invalid target");
+            
+            const from = getToken();
+            const fromReg = parseRegister(from);
+            if(fromReg !== -1) json.push({ type: "bytes", bytes: Buffer.from([0x03, (fromReg << 4) | reg]) });
+            else if(from === "*") {
+                removeSpace();
+                const addr = parseNumber(getToken());
+                if(Number.isNaN(addr)) throw new Error("Invalid dereference");
+                json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | 1]) });
+            }
         }
         removeSpace();
     }
