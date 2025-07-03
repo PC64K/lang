@@ -24,3 +24,6 @@ test("custom characters", () => {
 test("clearing display", () => {
     expect(compile("clear")).toEqual(Buffer.from("21", "hex"));
 });
+test("setting coordinates", () => {
+    expect(compile("printxy $8 $3")).toEqual(Buffer.from("2283", "hex"));
+});

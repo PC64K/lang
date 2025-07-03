@@ -246,6 +246,14 @@ export function compile(code) {
                 json.push({ type: "bytes", bytes: Buffer.from([0x25, charReg, (addr >> 8) & 0xff, addr & 0xff]) });
         } else if(tok === "clear")
             json.push({ type: "bytes", bytes: Buffer.from([0x21]) });
+        else if(tok === "printxy") {
+            removeSpace();
+            const reg1 = parseRegister(getToken());
+            removeSpace();
+            const reg2 = parseRegister(getToken());
+            if(reg1 === -1 || reg2 === -1) throw new Error("Invalid registers!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x22, (reg1 << 4) | reg2]) });
+        }
         removeSpace();
     }
 
