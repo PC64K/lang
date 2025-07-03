@@ -223,6 +223,22 @@ export function compile(code) {
             const timer = getToken();
             if(!["delay", "sound"].includes(timer)) throw new Error("Invalid timer!");
             json.push({ type: "bytes", bytes: Buffer.from([0x1b, timer === "delay" ? 0x40 : 0x41]) });
+        } else if(tok === "charset") {
+            removeSpace();
+            const char = parseNumber(getToken());
+            if(Number.isNaN(char)) throw new Error("Invalid character!");
+            removeSpace();
+            const addr = parseNumber(getToken());
+            if(Number.isNaN(addr)) throw new Error("Invalid character address!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x1e, char, (addr >> 8) & 0xff, addr & 0xff]) });
+        } else if(tok === "keygo") {
+            removeSpace();
+            const char = parseNumber(getToken());
+            if(Number.isNaN(char)) throw new Error("Invalid character!");
+            removeSpace();
+            const addr = parseNumber(getToken());
+            if(Number.isNaN(addr)) throw new Error("Invalid address!");
+            json.push({ type: "bytes", bytes: Buffer.from([0x1f, char, (addr >> 8) & 0xff, addr & 0xff]) });
         }
         removeSpace();
     }

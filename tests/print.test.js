@@ -15,3 +15,8 @@ test("print custom: constant values", () => {
 test("print custom: registers", () => {
     expect(compile("print custom $5")).toEqual(Buffer.from("2415", "hex"));
 });
+
+test("custom characters", () => {
+    expect(compile("charset 'a' 0x1234")).toEqual(Buffer.from("1e611234", "hex"));
+    expect(compile("charset 'A' 0x1235")).toEqual(Buffer.from("1e411235", "hex"));
+});

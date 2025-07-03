@@ -57,8 +57,8 @@ Everything is big-endian!
 |`1b`|`6X`|✔|
 |`1c`|`XX`|✔|
 |`1d`|`XX`|✔|
-|`1e`|`XXYYYY`||
-|`1f`|`XXYYYY`||
+|`1e`|`XXYYYY`|✔|
+|`1f`|`XXYYYY`|✔|
 |`20`|`XY`||
 |`21`|||
 |`22`|`XY`||
