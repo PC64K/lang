@@ -15,6 +15,11 @@ export function compile(code) {
         return tok;
     }
     const removeSpace = () => code = code.replace(SPACE_REGEX, "");
+    const nextNewline = () => {
+        const index = code.indexOf("\n");
+        if(index === -1) return;
+        code = code.slice(index + 1);
+    }
 
     removeSpace();
 
@@ -52,6 +57,8 @@ export function compile(code) {
     while(code !== "") {
         const tok = getToken();
         if(!tok) throw new Error("Couldn't match token!"); // TODO: at which line?
+        if(tok === ";")
+            nextNewline();
         if(tok === "[") {
             removeSpace();
             const name = getToken();
