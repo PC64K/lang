@@ -18,6 +18,20 @@ export function compile(code) {
 
     removeSpace();
 
+    // Helpers
+    const operation = (type06, opcode) => {
+        removeSpace();
+        const to = parseRegister(getToken());
+        if(to === -1) throw new Error("Invalid target!");
+        removeSpace();
+        const value = getToken();
+        const valueReg = parseRegister(value);
+        const valueNum = parseNumber(value);
+        if(valueReg !== -1) json.push({ type: "bytes", bytes: Buffer.from([opcode, (to << 4) | valueReg]) });
+        else if(valueNum !== -1) json.push({ type: "bytes", bytes: Buffer.from([0x06, (type06 << 4) | to, valueNum]) });
+        else throw new Error("Invalid value!");
+    }
+
     /** @type {Token[]} */
     const json = [];
     while(code !== "") {
@@ -101,7 +115,24 @@ export function compile(code) {
             removeSpace();
             const addr = getToken();
             json.push({ type: "bytes", bytes: Buffer.from([0x05, (addr >> 8) & 0xff, addr & 0xff]) });
-        }
+        } else if(tok === "add")
+            operation(0x1, 0x07)
+        else if(tok === "sub")
+            operation(0x2, 0x08)
+        else if(tok === "subi")
+            operation(0x3, 0x09)
+        else if(tok === "mul")
+            operation(0x4, 0x0a)
+        else if(tok === "or")
+            operation(0x5, 0x0b)
+        else if(tok === "and")
+            operation(0x6, 0x0c)
+        else if(tok === "xor")
+            operation(0x7, 0x0d)
+        else if(tok === "rshift")
+            operation(0x8, 0x0e)
+        else if(tok === "lshift")
+            operation(0x9, 0x0f)
         removeSpace();
     }
 
