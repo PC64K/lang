@@ -1,0 +1,15 @@
+[start]
+printsys 'H'
+printsys 'e'
+printsys 'l'
+printsys 'l'
+printsys 'o'
+printsys ' '
+printsys 'W'
+printsys 'o'
+printsys 'r'
+printsys 'l'
+printsys 'd'
+printsys '\r'
+printsys '\n'
+goto start
