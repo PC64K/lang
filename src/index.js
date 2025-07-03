@@ -244,7 +244,8 @@ export function compile(code) {
                 json.push({ type: "bytes", bytes: Buffer.from([0x1f, char, (addr >> 8) & 0xff, addr & 0xff]) });
             else
                 json.push({ type: "bytes", bytes: Buffer.from([0x25, charReg, (addr >> 8) & 0xff, addr & 0xff]) });
-        }
+        } else if(tok === "clear")
+            json.push({ type: "bytes", bytes: Buffer.from([0x21]) });
         removeSpace();
     }
 

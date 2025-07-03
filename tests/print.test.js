@@ -20,3 +20,7 @@ test("custom characters", () => {
     expect(compile("charset 'a' 0x1234")).toEqual(Buffer.from("1e611234", "hex"));
     expect(compile("charset 'A' 0x1235")).toEqual(Buffer.from("1e411235", "hex"));
 });
+
+test("clearing display", () => {
+    expect(compile("clear")).toEqual(Buffer.from("21", "hex"));
+});
