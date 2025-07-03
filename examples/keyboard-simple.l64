@@ -1,0 +1,9 @@
+[start]
+add $0 1
+keygo $0 print
+goto start
+
+[print]
+clear
+print sys $0
+goto start
