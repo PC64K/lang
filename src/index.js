@@ -75,16 +75,26 @@ export function compile(code) {
             const to = getToken();
             removeSpace();
             const reg = parseRegister(to);
-            if(reg === -1) throw new Error("Invalid target");
-            
-            const from = getToken();
-            const fromReg = parseRegister(from);
-            if(fromReg !== -1) json.push({ type: "bytes", bytes: Buffer.from([0x03, (fromReg << 4) | reg]) });
-            else if(from === "*") {
-                removeSpace();
-                const addr = parseNumber(getToken());
-                if(Number.isNaN(addr)) throw new Error("Invalid dereference");
-                json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | 1]) });
+            if(reg === -1) {
+                if(to === "*") {
+                    const addr = parseNumber(getToken());
+                    removeSpace();
+                    const reg = parseRegister(getToken());
+                    if(Number.isNaN(addr)) throw new Error("Invalid dereference!");
+                    if(reg === -1) throw new Error("Invalid value!");
+                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | 0]) });
+                } else throw new Error("Invalid target");
+            } else {
+                const from = getToken();
+                const fromReg = parseRegister(from);
+                const fromNumber = parseNumber(from);
+                if(fromReg !== -1) json.push({ type: "bytes", bytes: Buffer.from([0x03, (fromReg << 4) | reg]) });
+                else if(from === "*") {
+                    removeSpace();
+                    const addr = parseNumber(getToken());
+                    if(Number.isNaN(addr)) throw new Error("Invalid dereference");
+                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | 1]) });
+                } else if(!Number.isNaN(fromNumber)) json.push({ type: "bytes", bytes: Buffer.from([0x06, 0x00 | reg, fromNumber]) });
             }
         }
         removeSpace();
