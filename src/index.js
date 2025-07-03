@@ -97,6 +97,10 @@ export function compile(code) {
                     json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | (from === "*" ? 1 : 3)]) });
                 } else if(!Number.isNaN(fromNumber)) json.push({ type: "bytes", bytes: Buffer.from([0x06, 0x00 | reg, fromNumber]) });
             }
+        } else if(tok === "disksize") {
+            removeSpace();
+            const addr = getToken();
+            json.push({ type: "bytes", bytes: Buffer.from([0x05, (addr >> 8) & 0xff, addr & 0xff]) });
         }
         removeSpace();
     }

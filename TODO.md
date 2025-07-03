@@ -11,7 +11,7 @@ Everything is big-endian!
 |`04`|`XXXXY1`|✔|
 |`04`|`XXXXY2`|✔|
 |`04`|`XXXXY3`|✔|
-|`05`|`XXXX`||
+|`05`|`XXXX`|✔|
 |`06`|`0XNN`|✔|
 |`06`|`1XNN`||
 |`06`|`2XNN`||
