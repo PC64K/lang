@@ -7,7 +7,7 @@ Everything is big-endian!
 |`01`|`XXXX`|✔|
 |`02`|`XY`|✔|
 |`03`|`XY`|✔|
-|`04`|`XXXXY0`||
+|`04`|`XXXXY0`|✔|
 |`04`|`XXXXY1`|✔|
 |`04`|`XXXXY2`||
 |`04`|`XXXXY3`||
