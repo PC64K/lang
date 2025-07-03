@@ -17,5 +17,5 @@ test("goto: section", () => {
     expect(compile("goto test [test] goto 0x0000")).toEqual(Buffer.from("000003000000", "hex"));
 });
 test("goto: loops", () => {
-    expect(compile("[start] printsys 'a' goto start")).toEqual(Buffer.from("1c61000000", "hex"));
+    expect(compile("[start] print sys 'a' goto start")).toEqual(Buffer.from("1c61000000", "hex"));
 });

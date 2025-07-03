@@ -29,15 +29,19 @@ export function compile(code) {
             removeSpace();
             getToken(); // Closing bracket
             json.push({ type: "section", name });
-        } else if(tok === "printsys") {
+        } else if(tok === "print") {
             removeSpace();
+            const type = getToken();
+            removeSpace();
+            if(!["sys", "system", "custom"].includes(type))
+                throw new Error("Invalid print type! Supported: sys system custom");
             const char = getToken();
             const reg = parseRegister(char);
-            if(reg !== -1) json.push({ type: "bytes", bytes: Buffer.from(`240${reg.toString(16)}`, "hex") });
+            if(reg !== -1) json.push({ type: "bytes", bytes: Buffer.from(`24${type === "custom" ? 1 : 0}${reg.toString(16)}`, "hex") });
             else {
                 const num = parseNumber(char);
                 if(Number.isNaN(num)) throw new Error("Invalid token!");
-                json.push({ type: "bytes", bytes: Buffer.from(`1c${num.toString(16).slice(0, 2).padStart(2, "0")}`, "hex") });
+                json.push({ type: "bytes", bytes: Buffer.from([type === "custom" ? 0x1d : 0x1c, num], "hex") });
             }
         } else if(tok === "db") {
             removeSpace();
