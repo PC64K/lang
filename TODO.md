@@ -66,4 +66,4 @@ Everything is big-endian!
 |`23`|`XXXXYYYYZ1`||
 |`24`|`0X`|✔|
 |`24`|`1X`|✔|
-|`25`|`0XYYYY`||
+|`25`|`0XYYYY`|✔|

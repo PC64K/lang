@@ -233,12 +233,17 @@ export function compile(code) {
             json.push({ type: "bytes", bytes: Buffer.from([0x1e, char, (addr >> 8) & 0xff, addr & 0xff]) });
         } else if(tok === "keygo") {
             removeSpace();
-            const char = parseNumber(getToken());
-            if(Number.isNaN(char)) throw new Error("Invalid character!");
+            const charRaw = getToken();
+            const charReg = parseRegister(charRaw);
+            const char = parseNumber(charRaw);
+            if(Number.isNaN(char) && charReg === -1) throw new Error("Invalid character!");
             removeSpace();
             const addr = parseNumber(getToken());
             if(Number.isNaN(addr)) throw new Error("Invalid address!");
-            json.push({ type: "bytes", bytes: Buffer.from([0x1f, char, (addr >> 8) & 0xff, addr & 0xff]) });
+            if(charReg === -1)
+                json.push({ type: "bytes", bytes: Buffer.from([0x1f, char, (addr >> 8) & 0xff, addr & 0xff]) });
+            else
+                json.push({ type: "bytes", bytes: Buffer.from([0x25, charReg, (addr >> 8) & 0xff, addr & 0xff]) });
         }
         removeSpace();
     }

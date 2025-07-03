@@ -29,4 +29,6 @@ test("less than or equal", () => {
 test("keyboard", () => {
     expect(compile("keygo 'a' 0x1234")).toEqual(Buffer.from("1f611234", "hex"));
     expect(compile("keygo 'A' 0x5678")).toEqual(Buffer.from("1f415678", "hex"));
+
+    expect(compile("keygo $8 0x1234")).toEqual(Buffer.from("25081234", "hex"));
 });
