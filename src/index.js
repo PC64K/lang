@@ -31,6 +31,21 @@ export function compile(code) {
         else if(valueNum !== -1) json.push({ type: "bytes", bytes: Buffer.from([0x06, (type06 << 4) | to, valueNum]) });
         else throw new Error("Invalid value!");
     }
+    const comparison = (type1a, opcode) => {
+        removeSpace();
+        const cmp1 = parseRegister(getToken());
+        removeSpace();
+        const cmp2Raw = getToken();
+        const cmp2Reg = parseRegister(cmp2Raw);
+        const cmp2Num = parseNumber(cmp2Raw);
+        removeSpace();
+        const goto = getToken();
+        const addr = parseNumber(goto);
+        const part2 = Number.isNaN(addr) ? { type: "addr", name: goto } : { type: "bytes", bytes: Buffer.from([(addr >> 8) & 0xff, addr & 0xff]) };
+        if(cmp2Reg !== -1) json.push({ type: "bytes", bytes: Buffer.from([opcode, (cmp1 << 4) | cmp2Reg]) }, part2);
+        else if(!Number.isNaN(cmp2Num)) json.push({ type: "bytes", bytes: Buffer.from([0x1a, (cmp1 << 4) | type1a, cmp2Num]) }, part2);
+        else throw new Error("Invalid comparison argument!");
+    }
 
     /** @type {Token[]} */
     const json = [];
@@ -153,7 +168,18 @@ export function compile(code) {
             const addr = parseNumber(name);
             if(!Number.isNaN(addr)) json.push({ type: "bytes", bytes: Buffer.from([0x13, (addr >> 8) & 0xff, addr & 0xff]) });
             else json.push({ type: "bytes", bytes: Buffer.from([0x13]) }, { type: "addr", name });
-        }
+        } else if(tok === "eqgo")
+            comparison(0x0, 0x14);
+        else if(tok === "neqgo")
+            comparison(0x1, 0x15);
+        else if(tok === "morego")
+            comparison(0x2, 0x16);
+        else if(tok === "lessgo")
+            comparison(0x3, 0x17);
+        else if(tok === "moreeqgo")
+            comparison(0x4, 0x18);
+        else if(tok === "lesseqgo")
+            comparison(0x5, 0x19);
         removeSpace();
     }
 
