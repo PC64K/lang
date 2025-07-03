@@ -6,5 +6,5 @@ test("printsys: constant values", () => {
     expect(compile("printsys 0x20")).toEqual(Buffer.from("1c20", "hex"));
 });
 test("printsys: registers", () => {
-    expect(compile("printsys R5")).toEqual(Buffer.from("2405", "hex"));
+    expect(compile("printsys $5")).toEqual(Buffer.from("2405", "hex"));
 });
