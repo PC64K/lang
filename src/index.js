@@ -137,19 +137,22 @@ export function compile(code) {
             json.push({ type: "bytes", bytes: Buffer.from([0x10]) });
         else if(tok === "call") {
             removeSpace();
-            const addr = parseNumber(getToken());
+            const name = getToken();
+            const addr = parseNumber(name);
             if(!Number.isNaN(addr)) json.push({ type: "bytes", bytes: Buffer.from([0x11, (addr >> 8) & 0xff, addr & 0xff]) });
-            else json.push({ type: "bytes", bytes: Buffer.from([0x11]) }, { type: "addr", name: addr });
+            else json.push({ type: "bytes", bytes: Buffer.from([0x11]) }, { type: "addr", name });
         } else if(tok === "pop") { // TODO: parseAddr
             removeSpace();
-            const addr = parseNumber(getToken());
+            const name = getToken();
+            const addr = parseNumber(name);
             if(!Number.isNaN(addr)) json.push({ type: "bytes", bytes: Buffer.from([0x12, (addr >> 8) & 0xff, addr & 0xff]) });
-            else json.push({ type: "bytes", bytes: Buffer.from([0x12]) }, { type: "addr", name: addr });
+            else json.push({ type: "bytes", bytes: Buffer.from([0x12]) }, { type: "addr", name });
         } else if(tok === "push") {
             removeSpace();
-            const addr = parseNumber(getToken());
+            const name = getToken();
+            const addr = parseNumber(name);
             if(!Number.isNaN(addr)) json.push({ type: "bytes", bytes: Buffer.from([0x13, (addr >> 8) & 0xff, addr & 0xff]) });
-            else json.push({ type: "bytes", bytes: Buffer.from([0x13]) }, { type: "addr", name: addr });
+            else json.push({ type: "bytes", bytes: Buffer.from([0x13]) }, { type: "addr", name });
         }
         removeSpace();
     }

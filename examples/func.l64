@@ -1,0 +1,10 @@
+goto start
+[print]
+print sys $0
+ret
+[start]
+set $0 0x21
+[loop]
+call print
+add $0 1
+goto loop
