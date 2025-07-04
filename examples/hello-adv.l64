@@ -1,0 +1,16 @@
+[start]
+set $i hello
+set $1 1
+[loop]
+set $0 *$i
+eqgo $0 0x00 end
+print sys $0
+add $i $1
+goto loop
+[end]
+goto end
+[hello]
+db "Hello World!\r\n"
+db "This is a test program.\r\n"
+db "It reads a string from memory and prints it on the screen.\r\n"
+db h"00"
