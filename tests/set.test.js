@@ -30,4 +30,6 @@ test("set: $i / $j = reg reg", () => {
 test("set: $i / $j = addr", () => {
     expect(compile("set $i 0x5000")).toEqual(Buffer.from("265000", "hex"));
     expect(compile("set $j 0x8000")).toEqual(Buffer.from("278000", "hex"));
+
+    expect(compile("[test] set $i test")).toEqual(Buffer.from("260000", "hex"));
 });

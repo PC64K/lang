@@ -123,12 +123,14 @@ export function compile(code) {
                 if(["$i", "$j"].includes(to.toLowerCase())) {
                     const val = getToken();
                     const addr = parseNumber(val);
-                    if(Number.isNaN(addr)) {
+                    if(val[0] === "$") {
                         const reg1 = parseRegister(val);
                         removeSpace();
                         const reg2 = parseRegister(getToken());
                         if(reg1 === -1 || reg2 === -1) throw new Error("Invalid registers!");
                         json.push({ type: "bytes", bytes: Buffer.from([to.toLowerCase() === "$i" ? 0x28 : 0x29, (reg1 << 4) | reg2]) });
+                    } else if(Number.isNaN(addr)) {
+                        json.push({ type: "bytes", bytes: Buffer.from([to.toLowerCase() === "$i" ? 0x26 : 0x27]) }, { type: "addr", name: val });
                     } else
                         json.push({ type: "bytes", bytes: Buffer.from([to.toLowerCase() === "$i" ? 0x26 : 0x27, (addr >> 8) & 0xff, addr & 0xff]) });
                 } else if(to === "*" || to === "^") {
