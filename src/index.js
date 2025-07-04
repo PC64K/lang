@@ -24,11 +24,18 @@ export function compile(code) {
     removeSpace();
 
     // Helpers
-    const operation = (type06, opcode) => {
+    const operation = (type06, opcode, allowPointers = false) => {
         removeSpace();
-        const to = parseRegister(getToken());
+        const toRaw = getToken();
+        removeSpace();
+        if(["$i", "$j"].includes(toRaw) && allowPointers !== false) {
+            const reg = parseRegister(getToken());
+            if(reg === -1) throw new Error("You can only do operations with Ri and Rj with registers!");
+            json.push({ type: "bytes", bytes: Buffer.from([allowPointers, (toRaw === "$i" ? 0x00 : 0x10) | reg]) });
+            return;
+        }
+        const to = parseRegister(toRaw);
         if(to === -1) throw new Error("Invalid target!");
-        removeSpace();
         const value = getToken();
         const valueReg = parseRegister(value);
         const valueNum = parseNumber(value);
@@ -113,7 +120,18 @@ export function compile(code) {
             removeSpace();
             const reg = parseRegister(to);
             if(reg === -1) {
-                if(to === "*" || to === "^") {
+                if(["$i", "$j"].includes(to.toLowerCase())) {
+                    const val = getToken();
+                    const addr = parseNumber(val);
+                    if(Number.isNaN(addr)) {
+                        const reg1 = parseRegister(val);
+                        removeSpace();
+                        const reg2 = parseRegister(getToken());
+                        if(reg1 === -1 || reg2 === -1) throw new Error("Invalid registers!");
+                        json.push({ type: "bytes", bytes: Buffer.from([to.toLowerCase() === "$i" ? 0x28 : 0x29, (reg1 << 4) | reg2]) });
+                    } else
+                        json.push({ type: "bytes", bytes: Buffer.from([to.toLowerCase() === "$i" ? 0x26 : 0x27, (addr >> 8) & 0xff, addr & 0xff]) });
+                } else if(to === "*" || to === "^") {
                     const addr = parseNumber(getToken());
                     removeSpace();
                     const reg = parseRegister(getToken());
@@ -128,9 +146,14 @@ export function compile(code) {
                 if(fromReg !== -1) json.push({ type: "bytes", bytes: Buffer.from([0x03, (fromReg << 4) | reg]) });
                 else if(from === "*" || from === "^") {
                     removeSpace();
-                    const addr = parseNumber(getToken());
-                    if(Number.isNaN(addr)) throw new Error("Invalid dereference");
-                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | (from === "*" ? 1 : 3)]) });
+                    const addrRaw = getToken();
+                    if(["$i", "$j"].includes(addrRaw.toLowerCase())) {
+                        json.push({ type: "bytes", bytes: Buffer.from([0x2c, (addrRaw.toLowerCase() === "$i" ? 0x00 : 0x10) | reg]) });
+                    } else {
+                        const addr = parseNumber(addrRaw);
+                        if(Number.isNaN(addr)) throw new Error("Invalid dereference");
+                        json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | (from === "*" ? 1 : 3)]) });
+                    }
                 } else if(!Number.isNaN(fromNumber)) json.push({ type: "bytes", bytes: Buffer.from([0x06, 0x00 | reg, fromNumber]) });
             }
         } else if(tok === "disksize") {
@@ -138,9 +161,9 @@ export function compile(code) {
             const addr = getToken();
             json.push({ type: "bytes", bytes: Buffer.from([0x05, (addr >> 8) & 0xff, addr & 0xff]) });
         } else if(tok === "add")
-            operation(0x1, 0x07)
+            operation(0x1, 0x07, 0x2a)
         else if(tok === "sub")
-            operation(0x2, 0x08)
+            operation(0x2, 0x08, 0x2b)
         else if(tok === "subi")
             operation(0x3, 0x09)
         else if(tok === "mul")

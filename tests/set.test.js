@@ -19,3 +19,15 @@ test("set: reg = ^disk", () => {
 test("set: ^disk = reg", () => {
     expect(compile("set ^0x1234 $8")).toEqual(Buffer.from("04123482", "hex"));
 });
+test("set: reg = *$i / ^$j", () => {
+    expect(compile("set $7 ^$j")).toEqual(Buffer.from("2c17", "hex"));
+    expect(compile("set $7 *$i")).toEqual(Buffer.from("2c07", "hex"));
+});
+test("set: $i / $j = reg reg", () => {
+    expect(compile("set $i $8 $9")).toEqual(Buffer.from("2889", "hex"));
+    expect(compile("set $j $9 $8")).toEqual(Buffer.from("2998", "hex"));
+});
+test("set: $i / $j = addr", () => {
+    expect(compile("set $i 0x5000")).toEqual(Buffer.from("265000", "hex"));
+    expect(compile("set $j 0x8000")).toEqual(Buffer.from("278000", "hex"));
+});

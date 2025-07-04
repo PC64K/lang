@@ -4,10 +4,16 @@ import { compile } from "../src/index.js";
 test("addition", () => {
     expect(compile("set $1 10 add $1 1")).toEqual(Buffer.from("06010a061101", "hex"));
     expect(compile("set $1 10 set $2 5 add $1 $2")).toEqual(Buffer.from("06010a0602050712", "hex"));
+
+    expect(compile("add $i $4")).toEqual(Buffer.from("2a04", "hex"));
+    expect(compile("add $j $5")).toEqual(Buffer.from("2a15", "hex"));
 });
 test("subtraction", () => {
     expect(compile("set $1 10 sub $1 1")).toEqual(Buffer.from("06010a062101", "hex"));
     expect(compile("set $1 10 set $2 5 sub $1 $2")).toEqual(Buffer.from("06010a0602050812", "hex"));
+
+    expect(compile("sub $i $4")).toEqual(Buffer.from("2b04", "hex"));
+    expect(compile("sub $j $5")).toEqual(Buffer.from("2b15", "hex"));
 });
 test("inverse subtraction", () => {
     expect(compile("set $1 10 subi $1 1")).toEqual(Buffer.from("06010a063101", "hex"));
