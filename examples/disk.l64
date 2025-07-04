@@ -1,0 +1,17 @@
+; Will iterate through numbers 1-9 on each restart.
+[start]
+set $0 ^0x0000
+eqgo $0 9 reset
+add $0 1
+[save]
+set ^0x0000 $0
+[print]
+set $1 $0
+add $1 '0'
+print sys $1
+goto loop
+[reset]
+set $0 1
+goto save
+[loop]
+goto loop
