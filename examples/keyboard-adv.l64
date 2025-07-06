@@ -1,14 +1,18 @@
-[start]
+[main]
 add $0 1
 keygo $0 handle
-goto start
+goto main
 
 [handle]
 call print
 [loop]
 keygo $0 loop
-goto start
+goto main
 
 [print]
+neqgo $0 0x08 print_skip
+print sys $0
+print sys ' '
+[print_skip]
 print sys $0
 ret
