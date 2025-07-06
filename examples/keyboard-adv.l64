@@ -1,0 +1,14 @@
+[start]
+add $0 1
+keygo $0 handle
+goto start
+
+[handle]
+call print
+[loop]
+keygo $0 loop
+goto start
+
+[print]
+print sys $0
+ret
