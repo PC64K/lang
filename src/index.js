@@ -134,12 +134,17 @@ export function compile(code) {
                     } else
                         json.push({ type: "bytes", bytes: Buffer.from([to.toLowerCase() === "$i" ? 0x26 : 0x27, (addr >> 8) & 0xff, addr & 0xff]) });
                 } else if(to === "*" || to === "^") {
-                    const addr = parseNumber(getToken());
+                    const addrRaw = getToken();
+                    const addr = parseNumber(addrRaw);
                     removeSpace();
                     const reg = parseRegister(getToken());
-                    if(Number.isNaN(addr)) throw new Error("Invalid dereference!");
-                    if(reg === -1) throw new Error("Invalid value!");
-                    json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | (to === "*" ? 0 : 2)]) });
+                    if(["$i", "$j"].includes(addrRaw.toLowerCase())) {
+                        json.push({ type: "bytes", bytes: Buffer.from([0x2c, (addrRaw.toLowerCase() === "$i" ? 0x20 : 0x30) | reg]) })
+                    } else {
+                        if(Number.isNaN(addr)) throw new Error("Invalid dereference!");
+                        if(reg === -1) throw new Error("Invalid value!");
+                        json.push({ type: "bytes", bytes: Buffer.from([0x04, (addr >> 8) & 0xff, addr & 0xff, (reg << 4) | (to === "*" ? 0 : 2)]) });
+                    }
                 } else throw new Error("Invalid target");
             } else {
                 const from = getToken();

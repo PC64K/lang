@@ -55,6 +55,8 @@ For more context, see [opcodes docs](https://pc64k.github.io/docs/opcodes.html).
 |`goto`|Jumps to an address|`goto loop`|
 |`set $i`|Sets `Ri` to a value|`set $i 0x1234`|
 |`set $j`|Sets `Rj` to a value|`set $j 0x5678`|
+|`set *$i`|Sets value at `Ri` to the value of a register|`set *$i $5`|
+|`set ^$j`|Sets value at `Rj` to the value of a register|`set ^$j $5`|
 |`set *0x1234`|Sets value at RAM addr<sup>1</sup>|`set *0x1234 $a`|
 |`set ^0x5678`|Sets value at disk addr<sup>1</sup>|`set ^0x5678 $b`|
 |`set $x`|Sets `Rx` to a value|`set $a 0x55`|
