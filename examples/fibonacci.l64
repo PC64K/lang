@@ -1,0 +1,46 @@
+[start]
+set $0 1 ; A
+set $1 1 ; B
+set $3 10 ; Iterations
+[loop]
+eqgo $3 0 end
+set $2 $0
+add $2 $1
+call print
+set $0 $1
+set $1 $2
+sub $3 1
+goto loop
+
+[end]
+goto end
+
+[divmod]
+set $6 0
+[divloop]
+lessgo $4 $5 divend
+sub $4 $5
+add $6 1
+goto divloop
+[divend]
+ret
+
+[print]
+set $4 $2
+set $5 100
+call divmod
+set $a $6
+set $5 10
+call divmod
+set $b $6
+set $c $4
+
+add $a '0'
+add $b '0'
+add $c '0'
+print sys $a
+print sys $b
+print sys $c
+print sys '\r'
+print sys '\n'
+ret
