@@ -1,6 +1,6 @@
 {
   "name": "lang64k",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "lang64K is an assembly-like programming language for PC64K",
   "keywords": [
     "pc64k",
@@ -20,7 +20,7 @@
   "license": "MIT",
   "author": "Milk_Cool",
   "type": "module",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
