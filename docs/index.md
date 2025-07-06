@@ -2,6 +2,7 @@
 A simple assembly-like language for PC64K.
 
 ## Syntax
+
 |token|meaning|usage|
 |-|-|-|
 |`; text`|A single-line comment|`; Hello World!`|
@@ -45,6 +46,7 @@ ret ; Returns back to [handle]
 
 ## Instructions
 For more context, see [opcodes docs](https://pc64k.github.io/docs/opcodes.html).
+
 |instruction|meaning|example|
 |-|-|-|
 |`print sys`|Prints a system character|`print sys $2`|
