@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { compile } from "../src/index.js";
+import { compile, fnameIndicator } from "../src/index.js";
 import { parseArgs } from "util";
 import fs from "fs";
 
@@ -27,7 +27,7 @@ if(!["binary", "hex", "c"].includes(values.format)) {
     console.error("Invalid format! Must be binary, hex or c.");
     process.exit(1);
 }
-const code = positionals.map(x => fs.readFileSync(x, "utf-8")).join(" ");
+const code = positionals.map(x => `${fnameIndicator}${x}\n` + fs.readFileSync(x, "utf-8")).join("\n");
 const compiled = compile(code);
 const out = values.format === "binary"
     ? compiled
