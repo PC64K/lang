@@ -1,0 +1,12 @@
+; Hold down any key to play a beep!
+set $1 1
+set $2 100
+timfreq sound $2
+[loop]
+add $0 1
+keygo $0 print
+goto loop
+
+[print]
+timset sound $1
+goto loop

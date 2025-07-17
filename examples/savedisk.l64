@@ -1,0 +1,41 @@
+set $0 3
+set $i 0x7ffd
+set $j 0x0000
+copy *0x7ffd ^0x0000 $0 ; copy bootstrap
+
+set $0 0
+set $1 0
+set $3 1
+set $i 0x8000
+set $j 0x8000
+goto load
+
+[bootstrap:0x7ffd]
+goto 0x8000
+[program:0x8000]
+print sys 'h'
+print sys 'i'
+print sys '!'
+print sys '\r'
+print sys '\n'
+goto program
+
+[load:0xfe01] ; 255 * 255
+set $2 *$i
+set ^$j $2
+add $0 1
+add $i $3
+add $j $3
+neqgo $0 255 load ; skip checking if $0 != 255
+add $1 1
+set $0 0
+lessgo $1 3 load ; load 255 * 3 bytes
+[loop]
+print sys 'd'
+print sys 'o'
+print sys 'n'
+print sys 'e'
+print sys '!'
+print sys '\r'
+print sys '\n'
+goto loop

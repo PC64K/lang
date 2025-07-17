@@ -2,7 +2,7 @@ import { parseNumber } from "./numbers.js";
 import { SPACE_REGEX, TOKEN_REGEX } from "./regex.js";
 import { parseRegister } from "./registers.js";
 
-/** @typedef {{ type: "bytes" | "addr" | "section", bytes?: Buffer, name?: string }} Token */
+/** @typedef {{ type: "bytes" | "addr" | "section", bytes?: Buffer, name?: string, addr: number }} Token */
 
 export const fnameIndicator = `;_compiler_fname=`;
 
@@ -97,8 +97,14 @@ export function compile(code) {
             removeSpace();
             const name = getToken();
             removeSpace();
-            getToken(); // Closing bracket
-            json.push({ type: "section", name });
+            const sep = getToken(); // Closing bracket or address
+            let addr = null;
+            if(sep === ":") {
+                addr = parseNumber(getToken());
+                if(Number.isNaN(addr)) throw makeError("Invalid address for section!");
+                getToken(); // Closing bracket
+            }
+            json.push(Object.assign({ type: "section", name }, addr === null ? {} : { addr }));
         } else if(tok === "print") {
             removeSpace();
             const type = getToken();
@@ -338,22 +344,34 @@ export function compile(code) {
     const getSectionAddr = name => {
         let n = 0;
         for(const part of json)
-            if(part.type === "section" && part.name === name) return n;
+            if(part.type === "section" && part.name === name) return "addr" in part ? part.addr : n;
+            else if(part.type === "section" && "addr" in part) n = part.addr;
             else if(part.type === "bytes") n += part.bytes.length;
             else if(part.type === "addr") n += 2;
         return -1;
     };
 
+    let length = 0;
     return Buffer.concat(json
         .map(x => {
             if(x.type === "addr") {
                 const addr = getSectionAddr(x.name);
                 if(addr === -1) throw makeError("Can't find section: " + x.name);
+                length += 2;
                 return {
                     type: "bytes",
                     bytes: Buffer.from([(addr >> 8) & 0xff, addr & 0xff])
                 };
-            }
+            } else if(x.type === "section" && "addr" in x) {
+                const numBytes = x.addr - length;
+                if(numBytes < 0) throw makeError(`Section address shall not be lower than the length of bytes taken before the address! (${x.name})`);
+                length += numBytes;
+                return {
+                    type: "bytes",
+                    bytes: Buffer.alloc(numBytes)
+                };
+            } else if(x.type === "bytes")
+                length += x.bytes.length;
             return x;
         })
         .filter(x => x.type === "bytes")

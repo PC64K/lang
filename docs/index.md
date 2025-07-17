@@ -16,6 +16,7 @@ A simple assembly-like language for PC64K.
 |`"text"`|A string|`"Hello World!\r\n"`|
 |`h"hextext"`|A quoted hex string<sup>1</sup><sup>2</sup>|`h"015b"`|
 |`[section]`|Section marker|`[main]`|
+|`[section:0xnumber]`|Section marker with address|`[load:0xff00]`|
 |`text`|Instruction or section name|`goto`, `main`|
 
 #### Notes
